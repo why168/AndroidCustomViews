@@ -10,6 +10,7 @@ import android.text.Spannable
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import io.github.why168.R
+import io.github.why168.example.FloatBallActivity
 import io.github.why168.example.PinActivity
 import io.github.why168.example.PrintActivity
 import io.github.why168.example.ProgressActivity
@@ -42,6 +43,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(ProgressActivity::class.java)
         }
 
+        floatBall.setOnClickListener {
+            startActivity(FloatBallActivity::class.java)
+        }
     }
 
 }

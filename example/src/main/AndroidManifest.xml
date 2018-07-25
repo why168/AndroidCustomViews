@@ -18,7 +18,8 @@
         </activity>
         <activity android:name=".example.ProgressActivity" />
         <activity android:name=".example.PinActivity" />
-        <activity android:name=".example.PrintActivity"></activity>
+        <activity android:name=".example.PrintActivity" />
+        <activity android:name=".example.FloatBallActivity"></activity>
     </application>
 
 </manifest>
