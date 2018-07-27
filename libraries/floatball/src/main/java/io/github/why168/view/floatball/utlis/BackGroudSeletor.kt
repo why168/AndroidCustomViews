@@ -12,7 +12,6 @@ import android.graphics.drawable.NinePatchDrawable
 import android.graphics.drawable.StateListDrawable
 
 import java.io.IOException
-import java.io.InputStream
 
 object BackGroudSeletor {
     internal var PRESSED_ENABLED_STATE_SET = intArrayOf(16842910, 16842919)// debug出的该变量在view中的值
@@ -23,14 +22,14 @@ object BackGroudSeletor {
      * 该方法主要是构建StateListDrawable对象，以StateListDrawable来设置图片状态，来表现View的各中状态：未选中，按下
      * ，选中效果
      *
-     * @param imagename 选中和未选中使用的两张图片名称
+     * @param imageName 选中和未选中使用的两张图片名称
      * @param context   上下文
      */
-    fun createBgByImagedrawble(imagename: Array<String>,
-                               context: Context): StateListDrawable {
+    fun createBgByImageDrawable(imageName: Array<String>,
+                                context: Context): StateListDrawable {
         val bg = StateListDrawable()
-        val normal = getdrawble(imagename[0], context)
-        val pressed = getdrawble(imagename[1], context)
+        val normal = getDrawable(imageName[0], context)
+        val pressed = getDrawable(imageName[1], context)
         bg.addState(PRESSED_ENABLED_STATE_SET, pressed)
         bg.addState(ENABLED_STATE_SET, normal)
         bg.addState(EMPTY_STATE_SET, normal)
@@ -61,14 +60,13 @@ object BackGroudSeletor {
      * 该方法主要是构建StateListDrawable对象，以StateListDrawable来设置图片状态，来表现View的各中状态：未选中，按下
      * ，选中效果
      *
-     * @param imagename 选中和未选中使用的两张图片名称
+     * @param imageName 选中和未选中使用的两张图片名称
      * @param context   上下文
      */
-    fun createBgByImage9png(imagename: Array<String>,
-                            context: Context): StateListDrawable {
+    fun createBgByImage9png(imageName: Array<String>, context: Context): StateListDrawable {
         val bg = StateListDrawable()
-        val normal = get9png(imagename[0], context)
-        val pressed = get9png(imagename[1], context)
+        val normal = get9png(imageName[0], context)
+        val pressed = get9png(imageName[1], context)
         bg.addState(PRESSED_ENABLED_STATE_SET, pressed)
         bg.addState(ENABLED_STATE_SET, normal)
         bg.addState(EMPTY_STATE_SET, normal)
@@ -96,15 +94,15 @@ object BackGroudSeletor {
     /**
      * 该方法主要根据图片名称获取可用的 Drawable
      *
-     * @param imagename 选中和未选中使用的两张图片名称
+     * @param imageName 选中和未选中使用的两张图片名称
      * @param context   上下文
      * @return 可用的Drawable
      */
-    fun getdrawble(imagename: String, context: Context): Drawable? {
+    fun getDrawable(imageName: String, context: Context): Drawable? {
         var drawable: Drawable? = null
         var bitmap: Bitmap? = null
         try {
-            val imagePath = "image/$imagename.png"
+            val imagePath = "image/$imageName.png"
             bitmap = BitmapFactory.decodeStream(context.assets.open(imagePath))
             drawable = BitmapDrawable(bitmap)
         } catch (e: IOException) {
@@ -119,17 +117,17 @@ object BackGroudSeletor {
     /**
      * 获取asset下面的.9 png
      *
-     * @param imagename 图片名
+     * @param imageName 图片名
      * @param context   上下文对象
      */
-    fun get9png(imagename: String, context: Context): NinePatchDrawable? {
-        val toast_bitmap: Bitmap
+    fun get9png(imageName: String, context: Context): NinePatchDrawable? {
+        val toastBitmap: Bitmap
         try {
-            toast_bitmap = BitmapFactory.decodeStream(context.assets.open("image/$imagename.9.png"))
-            val temp = toast_bitmap.ninePatchChunk
+            toastBitmap = BitmapFactory.decodeStream(context.assets.open("image/$imageName.9.png"))
+            val temp = toastBitmap.ninePatchChunk
             val is_nine = NinePatch.isNinePatchChunk(temp)
             if (is_nine) {
-                return NinePatchDrawable(context.resources, toast_bitmap, temp, Rect(), null)
+                return NinePatchDrawable(context.resources, toastBitmap, temp, Rect(), null)
             }
         } catch (e: IOException) {
             e.printStackTrace()

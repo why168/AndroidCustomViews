@@ -3,27 +3,18 @@ package io.github.why168.view.floatball
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.ContextWrapper
 import android.content.res.Configuration
-import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
+import android.os.Build
 import android.support.v7.widget.AppCompatImageView
-import android.util.AttributeSet
 import android.util.Log
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewConfiguration
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.FrameLayout
-import android.widget.ImageView
+import io.github.why168.view.floatball.extension.setBackgroundDrawables
 
 import io.github.why168.view.floatball.runner.ICarrier
 import io.github.why168.view.floatball.runner.OnceRunnable
 import io.github.why168.view.floatball.runner.ScrollRunner
 import io.github.why168.view.floatball.utlis.MotionVelocityUtil
-import io.github.why168.view.floatball.utlis.Util
 
 
 /**
@@ -38,7 +29,7 @@ class FloatBall(context: Context,
                 private val floatBallManager: FloatBallManager,
                 private val mConfig: FloatBallCfg) : FrameLayout(context), ICarrier {
 
-    private var mLayoutParams: WindowManager.LayoutParams? = null
+    public var mLayoutParams: WindowManager.LayoutParams? = null
     private var windowManager: WindowManager? = null
     private var isFirst = true
     private var isAdded = false
@@ -48,8 +39,7 @@ class FloatBall(context: Context,
     private var mDownY: Int = 0
     private var mLastX: Int = 0
     private var mLastY: Int = 0
-    var size: Int = 0
-        private set
+    var size: Int = mConfig.mSize
     private var mRunner: ScrollRunner? = null
     private var mVelocityX: Int = 0
     private var mVelocityY: Int = 0
@@ -76,10 +66,13 @@ class FloatBall(context: Context,
     private fun init(context: Context) {
         val imageView = AppCompatImageView(context)
 
-        val icon = mConfig.mIcon
-        size = mConfig.mSize
+//        size = mConfig.mSize
 
-        Util.setBackground(imageView, icon)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            imageView.background = mConfig.mIcon
+        }
+
+        imageView.setBackgroundDrawables(mConfig.mIcon)
 
         addView(imageView, ViewGroup.LayoutParams(size, size))
         initLayoutParams(context)
@@ -134,6 +127,7 @@ class FloatBall(context: Context,
         postSleepRunnable()
     }
 
+    // 关闭拖动效果
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val action = event.action
@@ -350,8 +344,8 @@ class FloatBall(context: Context,
     }
 
     private fun onClick() {
-        floatBallManager.floatballX = mLayoutParams!!.x
-        floatBallManager.floatballY = mLayoutParams!!.y
+        floatBallManager.floatBallX = mLayoutParams!!.x
+        floatBallManager.floatBallY = mLayoutParams!!.y
         floatBallManager.onFloatBallClick()
     }
 

@@ -5,14 +5,14 @@ import android.content.Context
 import android.view.animation.LinearInterpolator
 import android.widget.Scroller
 
-class ScrollRunner(private val mCarrier: ICarrier, private val context: Context) : Runnable {
+class ScrollRunner(private val mCarrier: ICarrier, context: Context) : Runnable {
+
     private val mScroller: Scroller = Scroller(context, LinearInterpolator())
     private var mDuration = 250
     private var lastX: Int = 0
     private var lastY: Int = 0
 
-    val isRunning: Boolean
-        get() = !mScroller.isFinished
+    val isRunning: Boolean = !mScroller.isFinished
 
     @JvmOverloads
     fun start(dx: Int, dy: Int, duration: Int = mDuration) {

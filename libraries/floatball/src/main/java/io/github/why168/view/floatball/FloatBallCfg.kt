@@ -25,7 +25,7 @@ class FloatBallCfg {
     var mOffsetY = 0
     var mHideHalfLater = true
 
-    @JvmOverloads constructor(size: Int, icon: Drawable, gravity: Gravity = Gravity.LEFT_TOP, offsetY: Int = 0) {
+    constructor(size: Int, icon: Drawable, gravity: Gravity = Gravity.LEFT_TOP, offsetY: Int = 0) {
         mSize = size
         mIcon = icon
         mGravity = gravity
@@ -55,7 +55,7 @@ class FloatBallCfg {
         mHideHalfLater = hideHalfLater
     }
 
-    enum class Gravity private constructor(gravity: Int) {
+    enum class Gravity(gravity: Int) {
         LEFT_TOP(android.view.Gravity.LEFT or android.view.Gravity.TOP),
         LEFT_CENTER(android.view.Gravity.LEFT or android.view.Gravity.CENTER),
         LEFT_BOTTOM(android.view.Gravity.LEFT or android.view.Gravity.BOTTOM),

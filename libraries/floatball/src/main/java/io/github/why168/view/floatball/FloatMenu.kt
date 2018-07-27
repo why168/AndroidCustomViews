@@ -89,8 +89,8 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
     fun attachToWindow(windowManager: WindowManager) {
         if (!isAdded) {
             mBallSize = floatBallManager.ballSize
-            mLayoutParams!!.x = floatBallManager.floatballX
-            mLayoutParams!!.y = floatBallManager.floatballY - size / 2
+            mLayoutParams!!.x = floatBallManager.floatBallX
+            mLayoutParams!!.y = floatBallManager.floatBallY - size / 2
             mPosition = computeMenuLayout(mLayoutParams!!)
             refreshPathMenu(mPosition)
             toggle(mDuration)
@@ -204,38 +204,38 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
         when (position) {
             LEFT_TOP//左上
             -> {
-                iconLp.gravity = Gravity.LEFT or Gravity.TOP
-                menuLp.gravity = Gravity.LEFT or Gravity.TOP
+                iconLp.gravity = Gravity.LEFT or Gravity.START or Gravity.TOP
+                menuLp.gravity = Gravity.LEFT or Gravity.START or Gravity.TOP
                 mMenuLayout?.setArc(0f, 90f, position)
             }
             LEFT_CENTER//左中
             -> {
-                iconLp.gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
-                menuLp.gravity = Gravity.LEFT or Gravity.CENTER_VERTICAL
+                iconLp.gravity = Gravity.LEFT or Gravity.START or Gravity.CENTER_VERTICAL
+                menuLp.gravity = Gravity.LEFT or Gravity.START or Gravity.CENTER_VERTICAL
                 mMenuLayout?.setArc(270f, (270 + 180).toFloat(), position)
             }
             LEFT_BOTTOM//左下
             -> {
-                iconLp.gravity = Gravity.LEFT or Gravity.BOTTOM
-                menuLp.gravity = Gravity.LEFT or Gravity.BOTTOM
+                iconLp.gravity = Gravity.LEFT or Gravity.START or Gravity.BOTTOM
+                menuLp.gravity = Gravity.LEFT or Gravity.START or Gravity.BOTTOM
                 mMenuLayout?.setArc(270f, 360f, position)
             }
             RIGHT_TOP//右上
             -> {
-                iconLp.gravity = Gravity.RIGHT or Gravity.TOP
-                menuLp.gravity = Gravity.RIGHT or Gravity.TOP
+                iconLp.gravity = Gravity.RIGHT or Gravity.END or Gravity.TOP
+                menuLp.gravity = Gravity.RIGHT or Gravity.END or Gravity.TOP
                 mMenuLayout?.setArc(90f, 180f, position)
             }
             RIGHT_CENTER//右中
             -> {
-                iconLp.gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
-                menuLp.gravity = Gravity.RIGHT or Gravity.CENTER_VERTICAL
+                iconLp.gravity = Gravity.RIGHT or Gravity.END or Gravity.CENTER_VERTICAL
+                menuLp.gravity = Gravity.RIGHT or Gravity.END or Gravity.CENTER_VERTICAL
                 mMenuLayout?.setArc(90f, 270f, position)
             }
             RIGHT_BOTTOM//右下
             -> {
-                iconLp.gravity = Gravity.BOTTOM or Gravity.RIGHT
-                menuLp.gravity = Gravity.BOTTOM or Gravity.RIGHT
+                iconLp.gravity = Gravity.BOTTOM or Gravity.RIGHT or Gravity.END
+                menuLp.gravity = Gravity.BOTTOM or Gravity.RIGHT or Gravity.END
                 mMenuLayout?.setArc(180f, 270f, position)
             }
 
@@ -271,9 +271,9 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
         val halfBallSize = mBallSize / 2
         val screenWidth = floatBallManager.mScreenWidth
         val screenHeight = floatBallManager.mScreenHeight
-        val floatballCenterY = floatBallManager.floatballY + halfBallSize
+        val floatballCenterY = floatBallManager.floatBallY + halfBallSize
 
-        var wmX = floatBallManager.floatballX
+        var wmX = floatBallManager.floatBallX
         var wmY = floatballCenterY
 
         if (wmX <= screenWidth / 3)

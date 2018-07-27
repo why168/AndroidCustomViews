@@ -49,8 +49,12 @@ class MenuLayout
             val childCenterX = centerX + radius * Math.cos(Math.toRadians(degrees.toDouble()))
             val childCenterY = centerY + radius * Math.sin(Math.toRadians(degrees.toDouble()))
             //子菜单项的左上角，右上角，左下角，右下角
-            return Rect((childCenterX - size / 2).toInt(),
-                    (childCenterY - size / 2).toInt(), (childCenterX + size / 2).toInt(), (childCenterY + size / 2).toInt())
+            return Rect(
+                    (childCenterX - size / 2).toInt(),
+                    (childCenterY - size / 2).toInt(),
+                    (childCenterX + size / 2).toInt(),
+                    (childCenterY + size / 2).toInt()
+            )
         }
     }
 

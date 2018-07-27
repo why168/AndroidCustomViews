@@ -11,6 +11,7 @@ import io.github.why168.view.floatball.FloatBallCfg
 import io.github.why168.view.floatball.FloatBallManager
 import io.github.why168.view.floatball.FloatMenuCfg
 import io.github.why168.view.floatball.utlis.DensityUtil
+import kotlinx.android.synthetic.main.activity_float_ball.*
 
 /**
  * 悬浮框
@@ -22,7 +23,6 @@ import io.github.why168.view.floatball.utlis.DensityUtil
 class FloatBallActivity : AppCompatActivity() {
 
     private var mFloatBallManager: FloatBallManager? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +36,19 @@ class FloatBallActivity : AppCompatActivity() {
                 override fun onFloatBallClick() {
                     toast("点击了悬浮球")
                 }
-
             })
         }
+
+        clickFloatBall.setOnClickListener {
+            mFloatBallManager?.showTipView(" 震惊！恋养猫还能这样搜索... ",
+                    object : FloatBallManager.OnTipViewClickListener {
+                        override fun onTipViewClick() {
+                            toast("提示")
+                        }
+                    })
+        }
     }
+
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)

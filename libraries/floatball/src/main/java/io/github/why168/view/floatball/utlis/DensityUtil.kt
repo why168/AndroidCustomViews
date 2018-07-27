@@ -36,16 +36,13 @@ object DensityUtil {
     }
 
     private fun findScale(scale: Float): Float {
-        var scale = scale
-        if (scale <= 1) {
-            scale = 1f
-        } else if (scale <= 1.5) {
-            scale = 1.5f
-        } else if (scale <= 2) {
-            scale = 2f
-        } else if (scale <= 3) {
-            scale = 3f
+        var temScale = scale
+        when {
+            scale <= 1 -> temScale = 1f
+            scale <= 1.5 -> temScale = 1.5f
+            scale <= 2 -> temScale = 2f
+            scale <= 3 -> temScale = 3f
         }
-        return scale
+        return temScale
     }
 }

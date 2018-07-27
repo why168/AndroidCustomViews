@@ -2,11 +2,9 @@ package io.github.why168.view.floatball
 
 import android.app.Activity
 import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Paint
 import android.graphics.Point
 import android.os.Build
-import android.text.TextPaint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -26,16 +24,14 @@ class FloatBallManager {
     var mScreenWidth: Int = 0
     var mScreenHeight: Int = 0
     private var mPermission: IFloatBallPermission? = null
-    private var mFloatballClickListener: OnFloatBallClickListener? = null
+    private var mFloatBallClickListener: OnFloatBallClickListener? = null
     private var mWindowManager: WindowManager? = null
     private var mContext: Context? = null
     var floatBall: FloatBall? = null
-        private set
-    var floatMenu: FloatMenu? = null
-        private set
+    private var floatMenu: FloatMenu? = null
     private var statusBarView: StatusBarView? = null
-    var floatballX: Int = 0
-    var floatballY: Int = 0
+    var floatBallX: Int = 0
+    var floatBallY: Int = 0
     private var isShowing = false
     private var menuItems: MutableList<MenuItem>? = ArrayList()
     private var mActivity: Activity? = null
@@ -103,14 +99,16 @@ class FloatBallManager {
             mOnTipViewClickListener?.onTipViewClick()
         }
 
-
         val measuredHeight = tipView.measuredHeight
 
-        val statusBarLayoutParams = FloatBallUtil.getLayoutParams(mActivity, false)
-        statusBarLayoutParams.x = floatballX / 2 - ballSize / 2
-        statusBarLayoutParams.y = (floatballY - ballSize / 2 + measuredHeight * 1.5).toInt()
+        val floatBallX = floatBall!!.mLayoutParams!!.x
+        val floatBallY = floatBall!!.mLayoutParams!!.y
 
-        Log.i("TAG", "measuredHeight = $measuredHeight , floatballX = $floatballX，floatballY = $floatballY")
+        val statusBarLayoutParams = FloatBallUtil.getLayoutParams(mActivity, false)
+        statusBarLayoutParams.x = floatBallX / 2 - ballSize / 2
+        statusBarLayoutParams.y = (floatBallY - ballSize / 2 + measuredHeight * 1.5).toInt()
+
+        Log.i("TAG", "measuredHeight = $measuredHeight , floatBallX = $floatBallX，floatBallY = $floatBallY")
 
 
         //        mWindowManager.removeView(tipView);
@@ -219,8 +217,8 @@ class FloatBallManager {
         if (menuItems != null && menuItems!!.size > 0) {
             floatMenu!!.attachToWindow(mWindowManager!!)
         } else {
-            if (mFloatballClickListener != null) {
-                mFloatballClickListener!!.onFloatBallClick()
+            if (mFloatBallClickListener != null) {
+                mFloatBallClickListener!!.onFloatBallClick()
             }
         }
     }
@@ -243,7 +241,7 @@ class FloatBallManager {
     }
 
     fun setOnFloatBallClickListener(listener: OnFloatBallClickListener) {
-        mFloatballClickListener = listener
+        mFloatBallClickListener = listener
     }
 
     interface OnTipViewClickListener {
@@ -257,23 +255,18 @@ class FloatBallManager {
 
     interface IFloatBallPermission {
         /**
-         * request the permission of floatball,just use [.requestFloatBallPermission],
-         * or use your custom method.
-         *
-         * @return return true if requested the permission
-         * @see .requestFloatBallPermission
+         * 请求floatBall的权限
+         * @see requestFloatBallPermission
          */
         fun onRequestFloatBallPermission(): Boolean
 
         /**
-         * detect whether allow  using floatball here or not.
-         *
-         * @return
+         * 检测是否允许在这里使用浮动球。
          */
         fun hasFloatBallPermission(context: Context): Boolean
 
         /**
-         * request floatball permission
+         * 请求许可floatBall
          */
         fun requestFloatBallPermission(activity: Activity)
     }
