@@ -10,10 +10,7 @@ import android.text.Spannable
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
 import io.github.why168.R
-import io.github.why168.example.FloatBallActivity
-import io.github.why168.example.PinActivity
-import io.github.why168.example.PrintActivity
-import io.github.why168.example.ProgressActivity
+import io.github.why168.example.*
 import io.github.why168.extension.startActivity
 import kotlinx.android.synthetic.main.activity_print.*
 import kotlin.reflect.KClass
@@ -45,6 +42,10 @@ class MainActivity : AppCompatActivity() {
 
         floatBall.setOnClickListener {
             startActivity(FloatBallActivity::class.java)
+        }
+
+        gradientRound.setOnClickListener {
+            startActivity(GradientRoundActivity::class.java)
         }
     }
 

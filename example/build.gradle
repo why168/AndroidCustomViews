@@ -33,5 +33,6 @@ dependencies {
     implementation project(':libraries:pin-edittext')
     implementation project(':libraries:printerview')
     implementation project(':libraries:floatball')
+    implementation project(':libraries:gradient-round')
 
 }

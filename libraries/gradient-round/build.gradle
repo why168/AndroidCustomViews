@@ -13,10 +13,11 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 27
-        versionCode 2
-        versionName "1.1.0"
+        versionCode 1
+        versionName "1.0.0"
 
-        project.archivesBaseName = "printerview-${defaultConfig.versionName}"
+        project.archivesBaseName = "tworound-${defaultConfig.versionName}"
+
     }
 
     buildTypes {
@@ -43,5 +44,3 @@ task androidSourcesJar(type: Jar) {
 artifacts {
     archives androidSourcesJar
 }
-
-

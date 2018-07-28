@@ -35,6 +35,12 @@
             android:layout_height="wrap_content"
             android:text="悬浮框" />
 
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/gradientRound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2个渐变圆" />
+
 
     </android.support.v7.widget.LinearLayoutCompat>
 
