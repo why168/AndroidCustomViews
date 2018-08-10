@@ -25,6 +25,7 @@ class ProgressActivity : AppCompatActivity() {
                     seekBar.progress = 1
                 }
 
+                mColorGradientProgressBar.setProgress(seekBar.progress.toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -34,5 +35,6 @@ class ProgressActivity : AppCompatActivity() {
             }
 
         })
+
     }
 }
