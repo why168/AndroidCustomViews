@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import io.github.why168.dp2px
 
 
 /**
@@ -28,8 +29,8 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
 
 
     init {
-        borderStroke = context.dpToPx(1)
-        progressStroke = context.dpToPx(1)
+        borderStroke = dp2px(1F)
+        progressStroke = dp2px(1F)
     }
 
 
@@ -63,7 +64,7 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
         val section = progress / maxCount
 
 //        val round = height / 3//弧度为高度的一半
-        val round = context.dpToPx(20)
+        val round = dp2px(20F)
 
         mRectF.set(0f, 0f, width.toFloat(), height.toFloat())//第一层矩形(描边层)
         mPaint.color = Color.parseColor("#E6E6E6")//第一层矩形颜色(进度条描边的颜色)
@@ -137,7 +138,4 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
         this.progress = if (currentCount > maxCount) maxCount else currentCount
         postInvalidate()
     }
-
-
-    private fun Context.dpToPx(dp: Int) = dp * resources.displayMetrics.density
 }
