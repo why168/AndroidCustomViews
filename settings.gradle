@@ -1,6 +1,7 @@
-include ':example'
+include ':example', ':common'
 include ':libraries'
 include ':libraries:pin-edittext'
 include ':libraries:printerview'
 include ':libraries:floatball'
 include ':libraries:gradient-round'
+include ':libraries:progress'

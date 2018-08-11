@@ -63,10 +63,40 @@
             android:layout_width="20dp"
             android:layout_height="20dp" />
 
-        <io.github.why168.view.ShaderProgressBar
-            android:id="@+id/mColorGradientProgressBar"
+        <io.github.why168.progress.ShaderProgressBar
+            android:id="@+id/mColorGradientProgressBar1"
             android:layout_width="match_parent"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            app:endColor="#D15768"
+            app:max="100"
+            app:progress="50"
+            app:startColor="#ED8AA6" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <io.github.why168.progress.ShaderProgressBar
+            android:id="@+id/mColorGradientProgressBar2"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            app:endColor="#FC9745"
+            app:max="100"
+            app:progress="50"
+            app:startColor="#E8BE44" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <io.github.why168.progress.ShaderProgressBar
+            android:id="@+id/mColorGradientProgressBar3"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            app:endColor="#60B7E8"
+            app:max="100"
+            app:progress="50"
+            app:startColor="#59E080" />
 
         <android.support.v4.widget.Space
             android:layout_width="20dp"

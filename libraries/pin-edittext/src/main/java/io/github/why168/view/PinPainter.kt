@@ -11,7 +11,6 @@ import android.view.View
 /**
  *
  *
- *
  * @param normalPinDrawableRes 默认图案
  * @param highlightPinDrawableRes 按下图案
  * @param view

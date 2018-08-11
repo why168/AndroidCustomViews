@@ -1,4 +1,4 @@
-package round.io.github.why168.gradient
+package io.github.why168.gradient
 
 import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
@@ -7,6 +7,7 @@ import android.graphics.*
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
+import io.github.why168.common.dp2px
 
 /**
  *

@@ -1,6 +1,8 @@
-package round.io.github.why168.gradient
+package io.github.why168.common
 
 import android.app.Activity
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.StringRes
@@ -39,4 +41,12 @@ fun Activity.getScreenSizeHeight(): Int {
     val displayMetrics = DisplayMetrics()
     windowManager.defaultDisplay.getMetrics(displayMetrics);
     return displayMetrics.heightPixels
+}
+
+fun View.setBackgroundDrawables(drawable: Drawable) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        background = drawable
+    } else {
+        setBackgroundDrawable(drawable)
+    }
 }

@@ -9,7 +9,7 @@ import android.support.v7.widget.AppCompatImageView
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
-import io.github.why168.view.floatball.extension.setBackgroundDrawables
+import io.github.why168.common.setBackgroundDrawables
 
 import io.github.why168.view.floatball.runner.ICarrier
 import io.github.why168.view.floatball.runner.OnceRunnable
@@ -24,12 +24,11 @@ import io.github.why168.view.floatball.utlis.MotionVelocityUtil
  * @version 2018/7/21 下午2:36
  * @since JDK1.8
  */
-@SuppressLint("ViewConstructor")
 class FloatBall(context: Context,
                 private val floatBallManager: FloatBallManager,
                 private val mConfig: FloatBallCfg) : FrameLayout(context), ICarrier {
 
-    public var mLayoutParams: WindowManager.LayoutParams? = null
+    var mLayoutParams: WindowManager.LayoutParams? = null
     private var windowManager: WindowManager? = null
     private var isFirst = true
     private var isAdded = false
@@ -181,21 +180,21 @@ class FloatBall(context: Context,
         val topLimit = 0
         val bottomLimit = floatBallManager.mScreenHeight - height
         val statusBarHeight = floatBallManager.statusBarHeight
-        if (gravity and Gravity.LEFT == Gravity.LEFT) {
-            x = 0
+
+        x = if (gravity and Gravity.LEFT != Gravity.LEFT) {
+            floatBallManager.mScreenWidth - width
         } else {
-            x = floatBallManager.mScreenWidth - width
+            0
         }
 
-        if (gravity and Gravity.TOP == Gravity.TOP) {
-            y = topLimit
-        } else if (gravity and Gravity.BOTTOM == Gravity.BOTTOM) {
-            y = floatBallManager.mScreenHeight - height - statusBarHeight
-        } else {
-            y = floatBallManager.mScreenHeight / 2 - height / 2 - statusBarHeight
+        y = when {
+            gravity and Gravity.TOP == Gravity.TOP -> topLimit
+            gravity and Gravity.BOTTOM == Gravity.BOTTOM -> floatBallManager.mScreenHeight - height - statusBarHeight
+            else -> floatBallManager.mScreenHeight / 2 - height / 2 - statusBarHeight
         }
 
         y = if (mConfig.mOffsetY != 0) y + mConfig.mOffsetY else y
+
         if (y < 0) y = topLimit
         if (y > bottomLimit)
             y = topLimit

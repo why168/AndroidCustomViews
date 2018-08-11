@@ -25,7 +25,9 @@ class ProgressActivity : AppCompatActivity() {
                     seekBar.progress = 1
                 }
 
-                mColorGradientProgressBar.setProgress(seekBar.progress.toFloat())
+                mColorGradientProgressBar1.setProgress(seekBar.progress.toFloat())
+                mColorGradientProgressBar2.setProgress(seekBar.progress.toFloat())
+                mColorGradientProgressBar3.setProgress(seekBar.progress.toFloat())
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {

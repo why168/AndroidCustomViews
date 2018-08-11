@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Paint
 import android.graphics.Point
-import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,51 +19,31 @@ import java.util.ArrayList
  * @version 2018/7/24 下午4:02
  * @since JDK1.8
  */
-class FloatBallManager {
-    var mScreenWidth: Int = 0
-    var mScreenHeight: Int = 0
-    private var mPermission: IFloatBallPermission? = null
+class FloatBallManager(activity: Activity, ballCfg: FloatBallCfg, menuCfg: FloatMenuCfg? = null) {
     private var mFloatBallClickListener: OnFloatBallClickListener? = null
     private var mWindowManager: WindowManager? = null
-    private var mContext: Context? = null
-    var floatBall: FloatBall? = null
     private var floatMenu: FloatMenu? = null
     private var statusBarView: StatusBarView? = null
-    var floatBallX: Int = 0
-    var floatBallY: Int = 0
     private var isShowing = false
     private var menuItems: MutableList<MenuItem>? = ArrayList()
-    private var mActivity: Activity? = null
+    private var mActivity: Activity? = activity
 
-    val menuItemSize: Int
+    var floatBallX: Int = 0
+    var floatBallY: Int = 0
+    var floatBall: FloatBall? = null
+    var mScreenWidth: Int = 0
+    var mScreenHeight: Int = 0
+
+    var menuItemSize: Int = 0
         get() = if (menuItems != null) menuItems!!.size else 0
 
-    val ballSize: Int
+    var ballSize: Int = 0
         get() = floatBall!!.size
 
-    val statusBarHeight: Int
+    var statusBarHeight: Int = 0
         get() = statusBarView!!.statusBarHeight
 
-    constructor(application: Context, ballCfg: FloatBallCfg, menuCfg: FloatMenuCfg? = null) {
-        mContext = application.applicationContext
-        FloatBallUtil.inSingleActivity = false
-        mContext?.apply {
-            mWindowManager = getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
-            computeScreenSize()
-            floatBall = FloatBall(this, this@FloatBallManager, ballCfg)
-            floatMenu = FloatMenu(this, this@FloatBallManager, menuCfg)
-            statusBarView = StatusBarView(this, this@FloatBallManager)
-        }
-
-//        mWindowManager = mContext!!.getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
-//        computeScreenSize()
-//        floatBall = FloatBall(mContext!!, this, ballCfg)
-//        floatMenu = FloatMenu(mContext!!, this, menuCfg)
-//        statusBarView = StatusBarView(mContext!!, this)
-    }
-
-    constructor(activity: Activity, ballCfg: FloatBallCfg, menuCfg: FloatMenuCfg? = null) {
-        mActivity = activity
+    init {
         FloatBallUtil.inSingleActivity = true
         mActivity?.apply {
             mWindowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
@@ -73,13 +52,9 @@ class FloatBallManager {
             floatMenu = FloatMenu(this, this@FloatBallManager, menuCfg)
             statusBarView = StatusBarView(this, this@FloatBallManager)
         }
-
-//        mWindowManager = mActivity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-//        computeScreenSize()
-//        floatBall = FloatBall(mActivity!!, this, ballCfg)
-//        floatMenu = FloatMenu(mActivity!!, this, menuCfg)
-//        statusBarView = StatusBarView(mActivity!!, this)
     }
+
+
 
     fun buildMenu() {
         inflateMenuItem()
@@ -91,7 +66,7 @@ class FloatBallManager {
         tipView.measure(i, i)
 
         val tv = tipView.findViewById<TextView>(R.id.tipTextView)
-        tv.text = " 震惊！恋养猫还能这样搜索... "
+        tv.text = tip
         val paint = tv.paint
         paint.flags = Paint.UNDERLINE_TEXT_FLAG //下划线
         paint.isAntiAlias = true//抗锯齿
@@ -166,16 +141,11 @@ class FloatBallManager {
         }
     }
 
-    fun computeScreenSize() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            val point = Point()
-            mWindowManager!!.defaultDisplay.getSize(point)
-            mScreenWidth = point.x
-            mScreenHeight = point.y
-        } else {
-            mScreenWidth = mWindowManager!!.defaultDisplay.width
-            mScreenHeight = mWindowManager!!.defaultDisplay.height
-        }
+    private fun computeScreenSize() {
+        val point = Point()
+        mWindowManager!!.defaultDisplay.getSize(point)
+        mScreenWidth = point.x
+        mScreenHeight = point.y
     }
 
     fun onStatusBarHeightChange() {
@@ -183,16 +153,8 @@ class FloatBallManager {
     }
 
     fun show() {
-        if (mActivity == null) {
-            if (mPermission == null) {
-                return
-            }
-            if (!mPermission!!.hasFloatBallPermission(mContext!!)) {
-                mPermission!!.onRequestFloatBallPermission()
-                return
-            }
-        }
         if (isShowing) return
+
         isShowing = true
         floatBall!!.visibility = View.VISIBLE
 
@@ -236,10 +198,6 @@ class FloatBallManager {
         reset()
     }
 
-    fun setPermission(iPermission: IFloatBallPermission) {
-        this.mPermission = iPermission
-    }
-
     fun setOnFloatBallClickListener(listener: OnFloatBallClickListener) {
         mFloatBallClickListener = listener
     }
@@ -248,26 +206,7 @@ class FloatBallManager {
         fun onTipViewClick()
     }
 
-
     interface OnFloatBallClickListener {
         fun onFloatBallClick()
-    }
-
-    interface IFloatBallPermission {
-        /**
-         * 请求floatBall的权限
-         * @see requestFloatBallPermission
-         */
-        fun onRequestFloatBallPermission(): Boolean
-
-        /**
-         * 检测是否允许在这里使用浮动球。
-         */
-        fun hasFloatBallPermission(context: Context): Boolean
-
-        /**
-         * 请求许可floatBall
-         */
-        fun requestFloatBallPermission(activity: Activity)
     }
 }

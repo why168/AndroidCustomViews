@@ -1,6 +1,5 @@
 apply plugin: 'com.android.library'
 
-
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
@@ -14,9 +13,9 @@ android {
         minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0"
 
-        project.archivesBaseName = "tworound-${defaultConfig.versionName}"
+        project.archivesBaseName = "common-${defaultConfig.versionName}"
 
     }
 
@@ -30,8 +29,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':common')
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
@@ -44,7 +43,6 @@ task androidSourcesJar(type: Jar) {
 artifacts {
     archives androidSourcesJar
 }
-
 kapt {
     generateStubs = true
 }

@@ -117,7 +117,6 @@ class FloatBallActivity : AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-
     private fun addFloatMenuItem() {
         val personItem = object : io.github.why168.view.floatball.MenuItem(ContextCompat.getDrawable(this, R.drawable.dappp_menu_strategy)!!) {
             override fun action() {

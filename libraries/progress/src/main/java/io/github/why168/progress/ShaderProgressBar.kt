@@ -1,11 +1,12 @@
-package io.github.why168.view
+package io.github.why168.progress
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.graphics.*
+import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
-import io.github.why168.dp2px
-
+import io.github.why168.common.dp2px
 
 /**
  * @author Edwin.Wu edwin.wu05@gmail.com
@@ -17,7 +18,7 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
     private var progress = 0f
     private var borderStroke: Float = 0F // 外描边的宽度
     private var progressStroke: Float = 0F // 进度条进度矩形与控件边界的距离,≥borderStroke
-    private val gradientColorsBg = intArrayOf(Color.parseColor("#E8BE44"), Color.parseColor("#FE9445"))
+    private var gradientColorsBg: IntArray = IntArray(2)
     private var mRectF: RectF = RectF()
     private val path = Path()
     private val targetRect = Rect()
@@ -29,6 +30,17 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
 
 
     init {
+        val styledAttributes = getContext().obtainStyledAttributes(attrs, R.styleable.ShaderProgressBar, defStyleAttr, 0)
+        val startColor = styledAttributes.getColor(R.styleable.ShaderProgressBar_startColor, ContextCompat.getColor(getContext(), R.color.startColor))
+        val endColor = styledAttributes.getColor(R.styleable.ShaderProgressBar_endColor, ContextCompat.getColor(getContext(), R.color.endColor))
+        maxCount = styledAttributes.getFloat(R.styleable.ShaderProgressBar_max, 100F)
+        progress = styledAttributes.getFloat(R.styleable.ShaderProgressBar_progress, 0F)
+
+
+        gradientColorsBg[0] = startColor
+        gradientColorsBg[1] = endColor
+
+        styledAttributes.recycle()
         borderStroke = dp2px(1F)
         progressStroke = dp2px(1F)
     }
@@ -93,7 +105,7 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
                 shader = LinearGradient(progressStroke, progressStroke,
                         (width - progressStroke) * section,
                         height - progressStroke,
-                        gradientColorsBg, null, Shader.TileMode.MIRROR) // 第三层矩形颜色(进度渐变色)
+                        gradientColorsBg, null, Shader.TileMode.REPEAT) // 第三层矩形颜色(进度渐变色)
             }
 
 

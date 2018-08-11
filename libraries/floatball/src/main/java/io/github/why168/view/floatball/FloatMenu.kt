@@ -70,6 +70,7 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val action = event.action
         val x = event.rawX.toInt()
