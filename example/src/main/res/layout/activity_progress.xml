@@ -36,6 +36,19 @@
             android:paddingRight="0dp"
             android:thumb="@drawable/play_seekbar_thumb" />
 
+        <android.support.v4.widget.Space
+            android:layout_width="20dp"
+            android:layout_height="20dp" />
+
+        <io.github.why168.progress.ShaderProgressBar
+            android:id="@+id/mShaderProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            app:endColor="#60B7E8"
+            app:max="6901"
+            app:progress="4862"
+            app:startColor="#59E080" />
+
 
         <android.support.v4.widget.Space
             android:layout_width="20dp"

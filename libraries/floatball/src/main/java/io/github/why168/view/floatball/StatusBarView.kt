@@ -16,9 +16,12 @@ import android.view.WindowManager
  */
 @SuppressLint("ViewConstructor")
 class StatusBarView(mContext: Context, private val mFloatBallManager: FloatBallManager) : View(mContext) {
+
     private val mLayoutParams: WindowManager.LayoutParams = FloatBallUtil.getStatusBarLayoutParams(mContext)
     private var isAdded: Boolean = false
-    private val layoutChangeListener = OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom -> mFloatBallManager.onStatusBarHeightChange() }
+    private val layoutChangeListener = OnLayoutChangeListener { v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+        mFloatBallManager.onStatusBarHeightChange()
+    }
 
     val statusBarHeight: Int
         get() {

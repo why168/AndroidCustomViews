@@ -3,8 +3,8 @@ package io.github.why168.view.floatball.runner
 import android.view.View
 
 abstract class OnceRunnable : Runnable {
+
     var isRunning: Boolean = false
-        private set
 
     override fun run() {
         onRun()

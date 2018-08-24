@@ -14,9 +14,9 @@ android {
         minSdkVersion 14
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.1"
 
-        project.archivesBaseName = "tworound-${defaultConfig.versionName}"
+        project.archivesBaseName = "gradient-round-${defaultConfig.versionName}"
 
     }
 
@@ -31,7 +31,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':common')
+    api project(':common')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }

@@ -5,10 +5,10 @@ import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
+import io.github.why168.common.dp2px
 
 import io.github.why168.view.floatball.runner.ICarrier
 import io.github.why168.view.floatball.runner.ScrollRunner
-import io.github.why168.view.floatball.utlis.DensityUtil
 
 
 /**
@@ -97,12 +97,12 @@ class MenuLayout
 
 
     init {
-        MIN_RADIUS = DensityUtil.dip2px(context, 50F)
+        MIN_RADIUS = dp2px(50F).toInt()
         mRunner = ScrollRunner(this, context)
         isChildrenDrawingOrderEnabled = true
     }
 
-    fun computeCenterXY(position: Int) {
+    private fun computeCenterXY(position: Int) {
         val size = layoutSize
         when (position) {
             FloatMenu.LEFT_TOP//左上

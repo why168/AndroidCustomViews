@@ -4,12 +4,10 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.os.Build
 import android.support.v7.widget.AppCompatImageView
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
-import io.github.why168.common.setBackgroundDrawables
 
 import io.github.why168.view.floatball.runner.ICarrier
 import io.github.why168.view.floatball.runner.OnceRunnable
@@ -24,11 +22,12 @@ import io.github.why168.view.floatball.utlis.MotionVelocityUtil
  * @version 2018/7/21 下午2:36
  * @since JDK1.8
  */
+@SuppressLint("ViewConstructor")
 class FloatBall(context: Context,
                 private val floatBallManager: FloatBallManager,
-                private val mConfig: FloatBallCfg) : FrameLayout(context), ICarrier {
+                private val mConfig: FloatBallConfig) : FrameLayout(context), ICarrier {
 
-    var mLayoutParams: WindowManager.LayoutParams? = null
+    lateinit var mLayoutParams: WindowManager.LayoutParams
     private var windowManager: WindowManager? = null
     private var isFirst = true
     private var isAdded = false
@@ -38,7 +37,6 @@ class FloatBall(context: Context,
     private var mDownY: Int = 0
     private var mLastX: Int = 0
     private var mLastY: Int = 0
-    var size: Int = mConfig.mSize
     private var mRunner: ScrollRunner? = null
     private var mVelocityX: Int = 0
     private var mVelocityY: Int = 0
@@ -47,13 +45,15 @@ class FloatBall(context: Context,
     private var mHideHalfLater = true
     private var mLayoutChanged = false
     private var mSleepX = -1
+    var size: Int = mConfig.size
+
 
     private val mSleepRunnable = object : OnceRunnable() {
         override fun onRun() {
             if (mHideHalfLater && !sleep && isAdded) {
                 sleep = true
                 moveToEdge(false, sleep)
-                mSleepX = mLayoutParams!!.x
+                mSleepX = mLayoutParams.x
             }
         }
     }
@@ -64,14 +64,7 @@ class FloatBall(context: Context,
 
     private fun init(context: Context) {
         val imageView = AppCompatImageView(context)
-
-//        size = mConfig.mSize
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            imageView.background = mConfig.mIcon
-        }
-
-        imageView.setBackgroundDrawables(mConfig.mIcon)
+        imageView.setBackgroundResource(mConfig.icon)
 
         addView(imageView, ViewGroup.LayoutParams(size, size))
         initLayoutParams(context)
@@ -97,7 +90,7 @@ class FloatBall(context: Context,
         val height = measuredHeight
         val width = measuredWidth
 
-        val curX = mLayoutParams!!.x
+        val curX = mLayoutParams.x
         if (sleep && curX != mSleepX && !mRunner!!.isRunning) {
             sleep = false
             postSleepRunnable()
@@ -172,7 +165,7 @@ class FloatBall(context: Context,
     }
 
     private fun location(width: Int, height: Int) {
-        val cfgGravity = mConfig.mGravity
+        val cfgGravity = mConfig.gravity
         mHideHalfLater = mConfig.mHideHalfLater
         val gravity = cfgGravity.gravity
         val x: Int
@@ -264,18 +257,18 @@ class FloatBall(context: Context,
         val height = height
         var destY = 0
 
-        if (mLayoutParams!!.y < 0) {
-            destY = 0 - mLayoutParams!!.y
-        } else if (mLayoutParams!!.y > screenHeight - height) {
-            destY = screenHeight - height - mLayoutParams!!.y
+        if (mLayoutParams.y < 0) {
+            destY = 0 - mLayoutParams.y
+        } else if (mLayoutParams.y > screenHeight - height) {
+            destY = screenHeight - height - mLayoutParams.y
         }
 
         if (smooth) {
-            val dx = destX - mLayoutParams!!.x
+            val dx = destX - mLayoutParams.x
             val duration = getScrollDuration(Math.abs(dx))
             mRunner!!.start(dx, destY, duration)
         } else {
-            onMove(destX - mLayoutParams!!.x, destY)
+            onMove(destX - mLayoutParams.x, destY)
             postSleepRunnable()
         }
 
@@ -287,7 +280,7 @@ class FloatBall(context: Context,
         val halfWidth = width / 2
         val centerX = screenWidth / 2 - halfWidth
         val destX: Int
-        destX = if (mLayoutParams!!.x < centerX) 0 else screenWidth - width
+        destX = if (mLayoutParams.x < centerX) 0 else screenWidth - width
         sleep = false
         moveToX(true, destX)
     }
@@ -301,7 +294,7 @@ class FloatBall(context: Context,
         val destX: Int
 
         val minVelocity = mVelocity!!.minVelocity
-        if (mLayoutParams!!.x < centerX) {
+        if (mLayoutParams.x < centerX) {
             sleep = forceSleep || Math.abs(mVelocityX) > minVelocity && mVelocityX < 0 || mLayoutParams!!.x < 0
             destX = if (sleep) -halfWidth else 0
         } else {
@@ -319,32 +312,26 @@ class FloatBall(context: Context,
     }
 
     private fun onMove(deltaX: Int, deltaY: Int) {
-        mLayoutParams!!.x += deltaX
-        mLayoutParams!!.y += deltaY
-        if (windowManager != null) {
-            windowManager!!.updateViewLayout(this, mLayoutParams)
-        }
+        mLayoutParams.x += deltaX
+        mLayoutParams.y += deltaY
+        windowManager?.updateViewLayout(this, mLayoutParams)
     }
 
     fun onLocation(x: Int, y: Int) {
-        mLayoutParams!!.x = x
-        mLayoutParams!!.y = y
-        if (windowManager != null) {
-            windowManager!!.updateViewLayout(this, mLayoutParams)
-        }
+        mLayoutParams.x = x
+        mLayoutParams.y = y
+        windowManager?.updateViewLayout(this, mLayoutParams)
     }
 
     private fun moveTo(x: Int, y: Int) {
-        mLayoutParams!!.x += x - mLayoutParams!!.x
-        mLayoutParams!!.y += y - mLayoutParams!!.y
-        if (windowManager != null) {
-            windowManager!!.updateViewLayout(this, mLayoutParams)
-        }
+        mLayoutParams.x += x - mLayoutParams.x
+        mLayoutParams.y += y - mLayoutParams.y
+        windowManager?.updateViewLayout(this, mLayoutParams)
     }
 
     private fun onClick() {
-        floatBallManager.floatBallX = mLayoutParams!!.x
-        floatBallManager.floatBallY = mLayoutParams!!.y
+        floatBallManager.floatBallX = mLayoutParams.x
+        floatBallManager.floatBallY = mLayoutParams.y
         floatBallManager.onFloatBallClick()
     }
 

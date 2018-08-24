@@ -1,16 +1,18 @@
 package io.github.why168.example
 
+import android.animation.ValueAnimator
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
 import android.widget.Toast
 import io.github.why168.R
-import io.github.why168.view.floatball.FloatBallCfg
+import io.github.why168.common.dp2px
+import io.github.why168.view.floatball.FloatBallConfig
 import io.github.why168.view.floatball.FloatBallManager
 import io.github.why168.view.floatball.FloatMenuCfg
-import io.github.why168.view.floatball.utlis.DensityUtil
 import kotlinx.android.synthetic.main.activity_float_ball.*
 
 /**
@@ -21,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_float_ball.*
  * @since JDK1.8
  */
 class FloatBallActivity : AppCompatActivity() {
-
     private var mFloatBallManager: FloatBallManager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,22 +31,26 @@ class FloatBallActivity : AppCompatActivity() {
 
         initSinglePageFloatBall(true)
 
-        //5 如果没有添加菜单，可以设置悬浮球点击事件
-        if (mFloatBallManager?.menuItemSize == 0) {
-            mFloatBallManager?.setOnFloatBallClickListener(object : FloatBallManager.OnFloatBallClickListener {
-                override fun onFloatBallClick() {
-                    toast("点击了悬浮球")
-                }
-            })
-        }
-
         clickFloatBall.setOnClickListener {
-            mFloatBallManager?.showTipView(" 震惊！恋养猫还能这样搜索... ",
-                    object : FloatBallManager.OnTipViewClickListener {
-                        override fun onTipViewClick() {
-                            toast("提示")
-                        }
-                    })
+            mFloatBallManager?.showTipView(" 震惊！恋养猫还能这样搜索... ")
+
+
+            val valueAnimator = ValueAnimator.ofInt(0, mFrameLayout.width)
+            valueAnimator.duration = 1000
+            valueAnimator.interpolator = LinearInterpolator()
+            valueAnimator.addUpdateListener { animator ->
+                val currentValue = animator.animatedValue as Int
+//                println("currentValue = $currentValue")
+
+                val layoutParams = mFrameLayout.layoutParams
+                layoutParams.width = currentValue
+                mFrameLayout.layoutParams = layoutParams
+                mFrameLayout.postInvalidate()
+            }
+
+            valueAnimator.start()
+
+
         }
     }
 
@@ -91,25 +96,30 @@ class FloatBallActivity : AppCompatActivity() {
      * @param showMenu 显示菜单
      */
     private fun initSinglePageFloatBall(showMenu: Boolean) {
-        //1 初始化悬浮球配置，定义好悬浮球大小和icon的drawable
-        val ballSize = DensityUtil.dip2px(this, 45F)
-        val ballIcon = ContextCompat.getDrawable(this, R.drawable.dappp_menu_logo)!!
-        val ballCfg = FloatBallCfg(ballSize, ballIcon, FloatBallCfg.Gravity.RIGHT_CENTER)
+        val floatBallConfig = FloatBallConfig(
+                size = dp2px(45F).toInt(),
+                icon = R.drawable.dappp_menu_logo,
+                gravity = FloatBallConfig.Gravity.RIGHT_CENTER)
+
         // 设置悬浮球不半隐藏
-        ballCfg.setHideHalfLater(false)
+        floatBallConfig.mHideHalfLater = false
+
         if (showMenu) {
             //2 需要显示悬浮菜单
             //2.1 初始化悬浮菜单配置，有菜单item的大小和菜单item的个数
-            val menuSize = DensityUtil.dip2px(this, 180F)
-            val menuItemSize = DensityUtil.dip2px(this, 40F)
+            val menuSize = dp2px(180F).toInt()
+            val menuItemSize = dp2px(40F).toInt()
             val menuCfg = FloatMenuCfg(menuSize, menuItemSize)
             //3 生成floatballManager
             //必须传入Activity
-            mFloatBallManager = FloatBallManager(this, ballCfg, menuCfg)
+            mFloatBallManager = FloatBallManager(this, floatBallConfig, menuCfg) {
+                Toast.makeText(this, "标签", Toast.LENGTH_SHORT).show()
+                true
+            }
             addFloatMenuItem()
         } else {
             //必须传入Activity
-            mFloatBallManager = FloatBallManager(this, ballCfg)
+            mFloatBallManager = FloatBallManager(this, floatBallConfig)
         }
     }
 

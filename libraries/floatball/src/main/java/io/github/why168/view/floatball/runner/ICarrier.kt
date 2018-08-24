@@ -1,6 +1,5 @@
 package io.github.why168.view.floatball.runner
 
-import android.content.Context
 
 interface ICarrier {
 

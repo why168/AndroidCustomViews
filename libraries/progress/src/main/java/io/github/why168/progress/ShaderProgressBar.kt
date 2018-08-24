@@ -6,16 +6,22 @@ import android.graphics.*
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.view.View
+import android.widget.TextView
 import io.github.why168.common.dp2px
+import io.github.why168.common.px2dip
+import java.text.NumberFormat
 
 /**
+ *
+ *
+ *
  * @author Edwin.Wu edwin.wu05@gmail.com
  * @version 2018/8/10 下午7:03
  * @since JDK1.8
  */
 class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : View(context, attrs, defStyleAttr) {
-    private var maxCount = 100f
-    private var progress = 0f
+    private var maxCount: Float = 100f
+    private var progress: Float = 0f
     private var borderStroke: Float = 0F // 外描边的宽度
     private var progressStroke: Float = 0F // 进度条进度矩形与控件边界的距离,≥borderStroke
     private var gradientColorsBg: IntArray = IntArray(2)
@@ -27,7 +33,10 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
         isAntiAlias = true // 抗锯齿
         flags = Paint.ANTI_ALIAS_FLAG // 帮助消除锯齿
     }
-
+    private val numberFormat = NumberFormat.getInstance().apply {
+        maximumFractionDigits = 2  // 设置精确到小数点后2位
+    }
+    public var diyDrawText: String = ""
 
     init {
         val styledAttributes = getContext().obtainStyledAttributes(attrs, R.styleable.ShaderProgressBar, defStyleAttr, 0)
@@ -125,20 +134,34 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
             isAntiAlias = true // 抗锯齿
             flags = Paint.ANTI_ALIAS_FLAG // 帮助消除锯齿
             strokeWidth = 3F
-            textSize = 35F
+            textSize = dp2px(12F)
             color = Color.BLACK
         }
+
 
         val fontMetrics = mPaint.fontMetricsInt
         val baseline = (targetRect.bottom + targetRect.top - fontMetrics.bottom - fontMetrics.top) / 2
         mPaint.textAlign = Paint.Align.CENTER
-        canvas.drawText("$progress%", targetRect.centerX().toFloat(), baseline.toFloat(), mPaint)
+
+        if (diyDrawText.isNotEmpty()) {
+            canvas.drawText(diyDrawText, targetRect.centerX().toFloat(), baseline.toFloat(), mPaint)
+        } else {
+            val result = numberFormat.format((progress / maxCount * 100).toDouble())
+            canvas.drawText("$result%", targetRect.centerX().toFloat(), baseline.toFloat(), mPaint)
+        }
 
         mPaint.reset()
     }
 
     override fun dispatchDraw(canvas: Canvas?) {
         super.dispatchDraw(canvas)
+    }
+
+    /**
+     * 设置最大进度
+     */
+    fun setMaxCount(maxCount: Float) {
+        this.maxCount = maxCount
     }
 
     /***
@@ -150,4 +173,6 @@ class ShaderProgressBar @JvmOverloads constructor(context: Context, attrs: Attri
         this.progress = if (currentCount > maxCount) maxCount else currentCount
         postInvalidate()
     }
+
+
 }

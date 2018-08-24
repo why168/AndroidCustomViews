@@ -30,8 +30,19 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
 
+/**
+ *
+ * 悬浮菜单
+ *
+ * @author Edwin.Wu edwin.wu05@gmail.com
+ * @version 2018/8/24 下午4:07
+ * @since JDK1.8
+ */
 @SuppressLint("ViewConstructor")
-class FloatMenu(context: Context, private val floatBallManager: FloatBallManager, private val mConfig: FloatMenuCfg?) : FrameLayout(context) {
+class FloatMenu(context: Context,
+                private val floatBallManager: FloatBallManager,
+                private val mConfig: FloatMenuCfg?) : FrameLayout(context) {
+
     private var mMenuLayout: MenuLayout? = null
 
     private var mIconView: ImageView? = null
@@ -43,6 +54,20 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
     private var isAdded = false
     private var mBallSize: Int = 0
     private val mListenBackEvent = true
+
+
+    companion object {
+        const val LEFT_TOP = 1
+        const val CENTER_TOP = 2
+        const val RIGHT_TOP = 3
+        const val LEFT_CENTER = 4
+        const val CENTER = 5
+        const val RIGHT_CENTER = 6
+        const val LEFT_BOTTOM = 7
+        const val CENTER_BOTTOM = 8
+        const val RIGHT_BOTTOM = 9
+    }
+
 
     val isMoving: Boolean
         get() = mMenuLayout!!.isMoving
@@ -277,33 +302,39 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
         var wmX = floatBallManager.floatBallX
         var wmY = floatballCenterY
 
-        if (wmX <= screenWidth / 3)
-        //左边  竖区域
-        {
+        if (wmX <= screenWidth / 3) {
+            //左边  竖区域
             wmX = 0
-            if (wmY <= size / 2) {
-                position = FloatMenu.LEFT_TOP//左上
-                wmY = floatballCenterY - halfBallSize
-            } else if (wmY > screenHeight - size / 2) {
-                position = FloatMenu.LEFT_BOTTOM//左下
-                wmY = floatballCenterY - size + halfBallSize
-            } else {
-                position = FloatMenu.LEFT_CENTER//左中
-                wmY = floatballCenterY - size / 2
+            when {
+                wmY <= size / 2 -> {
+                    position = FloatMenu.LEFT_TOP//左上
+                    wmY = floatballCenterY - halfBallSize
+                }
+                wmY > screenHeight - size / 2 -> {
+                    position = FloatMenu.LEFT_BOTTOM//左下
+                    wmY = floatballCenterY - size + halfBallSize
+                }
+                else -> {
+                    position = FloatMenu.LEFT_CENTER//左中
+                    wmY = floatballCenterY - size / 2
+                }
             }
-        } else if (wmX >= screenWidth * 2 / 3)
-        //右边竖区域
-        {
+        } else if (wmX >= screenWidth * 2 / 3) {
+            //右边竖区域
             wmX = screenWidth - size
-            if (wmY <= size / 2) {
-                position = FloatMenu.RIGHT_TOP//右上
-                wmY = floatballCenterY - halfBallSize
-            } else if (wmY > screenHeight - size / 2) {
-                position = FloatMenu.RIGHT_BOTTOM//右下
-                wmY = floatballCenterY - size + halfBallSize
-            } else {
-                position = FloatMenu.RIGHT_CENTER//右中
-                wmY = floatballCenterY - size / 2
+            when {
+                wmY <= size / 2 -> {
+                    position = FloatMenu.RIGHT_TOP//右上
+                    wmY = floatballCenterY - halfBallSize
+                }
+                wmY > screenHeight - size / 2 -> {
+                    position = FloatMenu.RIGHT_BOTTOM//右下
+                    wmY = floatballCenterY - size + halfBallSize
+                }
+                else -> {
+                    position = FloatMenu.RIGHT_CENTER//右中
+                    wmY = floatballCenterY - size / 2
+                }
             }
         }
         layoutParams.x = wmX
@@ -311,16 +342,4 @@ class FloatMenu(context: Context, private val floatBallManager: FloatBallManager
         return position
     }
 
-    companion object {
-
-        val LEFT_TOP = 1
-        val CENTER_TOP = 2
-        val RIGHT_TOP = 3
-        val LEFT_CENTER = 4
-        val CENTER = 5
-        val RIGHT_CENTER = 6
-        val LEFT_BOTTOM = 7
-        val CENTER_BOTTOM = 8
-        val RIGHT_BOTTOM = 9
-    }
 }

@@ -1,6 +1,7 @@
 package io.github.why168.common
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.annotation.ColorRes
@@ -23,11 +24,24 @@ fun View.getColorById(@ColorRes id: Int) = ContextCompat.getColor(context, id)
 // 获取字符串值
 fun View.getStringRes(@StringRes id: Int): String = context.getString(id)
 
+fun Context.getStringRes(@StringRes id: Int): String = getString(id)
+
 // 根据手机的分辨率从 dp(密度) 转成为 px(像素)
 fun View.dp2px(dpValue: Float): Float = dpValue * context.resources.displayMetrics.density + 0.5f * if (dpValue >= 0) 1 else -1
 
+fun Context.dp2px(dpValue: Float): Float = dpValue * resources.displayMetrics.density + 0.5f * if (dpValue >= 0) 1 else -1
+
 // 根据手机的分辨率从 px(像素) 转成为 dp(密度)
 fun View.px2dip(dpValue: Float): Float = dpValue / context.resources.displayMetrics.density + 0.5f * if (dpValue >= 0) 1 else -1
+
+fun Context.px2dip(dpValue: Float): Float = dpValue / resources.displayMetrics.density + 0.5f * if (dpValue >= 0) 1 else -1
+
+fun View.sp2px(sxValue: Float): Float = sxValue * context.resources.displayMetrics.density + 0.5f * if (sxValue >= 0) 1 else -1
+fun Context.sp2px(sxValue: Float): Float = sxValue * resources.displayMetrics.density + 0.5f * if (sxValue >= 0) 1 else -1
+
+fun View.px2sp(pxValue: Float): Float = pxValue / context.resources.displayMetrics.density + 0.5f * if (pxValue >= 0) 1 else -1
+fun Context.px2sp(pxValue: Float): Float = pxValue / resources.displayMetrics.density + 0.5f * if (pxValue >= 0) 1 else -1
+
 
 // 获取屏幕宽度
 fun Activity.getScreenSizeWidth(): Int {

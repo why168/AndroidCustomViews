@@ -22,29 +22,14 @@ class MotionVelocityUtil(context: Context) {
     val minVelocity: Int
         get() = if (mMinVelocity < 1000) 1000 else mMinVelocity
 
-    /**
-     * Retrieve the last computed X velocity.  You must first call
-     * [.computeCurrentVelocity] before calling this function.
-     *
-     * @return The previously computed X velocity.
-     */
+
     val xVelocity: Float
         get() = mVelocityTracker!!.xVelocity
 
-    /**
-     * Retrieve the last computed Y velocity.  You must first call
-     * [.computeCurrentVelocity] before calling this function.
-     *
-     * @return The previously computed Y velocity.
-     */
+
     val yVelocity: Float
         get() = mVelocityTracker!!.yVelocity
 
-    /**
-     * @param event 向VelocityTracker添加MotionEvent
-     * @see VelocityTracker.obtain
-     * @see VelocityTracker.addMovement
-     */
     fun acquireVelocityTracker(event: MotionEvent) {
         if (null == mVelocityTracker) {
             mVelocityTracker = VelocityTracker.obtain()
@@ -56,12 +41,6 @@ class MotionVelocityUtil(context: Context) {
         mVelocityTracker!!.computeCurrentVelocity(1000, mMaxVelocity.toFloat())
     }
 
-    /**
-     * 释放VelocityTracker
-     *
-     * @see VelocityTracker.clear
-     * @see VelocityTracker.recycle
-     */
     fun releaseVelocityTracker() {
         if (null != mVelocityTracker) {
             mVelocityTracker!!.clear()

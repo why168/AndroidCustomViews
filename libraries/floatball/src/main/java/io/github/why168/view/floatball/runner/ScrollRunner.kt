@@ -14,12 +14,10 @@ class ScrollRunner(private val mCarrier: ICarrier, context: Context) : Runnable 
 
     val isRunning: Boolean = !mScroller.isFinished
 
-    @JvmOverloads
     fun start(dx: Int, dy: Int, duration: Int = mDuration) {
         start(0, 0, dx, dy, duration)
     }
 
-    @JvmOverloads
     fun start(startX: Int, startY: Int, dx: Int, dy: Int, duration: Int = mDuration) {
         this.mDuration = duration
         mScroller.startScroll(startX, startY, dx, dy, duration)

@@ -3,12 +3,13 @@
     android:layout_width="wrap_content"
     android:layout_height="30dp">
 
-    <TextView
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/tipTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
         android:background="@drawable/icon_tip"
-        android:gravity="center"
+        android:gravity="center_vertical"
+        android:maxLines="1"
         android:paddingEnd="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"

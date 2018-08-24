@@ -35,7 +35,6 @@ dependencies {
     implementation project(':libraries:floatball')
     implementation project(':libraries:gradient-round')
     implementation project(':libraries:progress')
-
 }
 
 kapt {
