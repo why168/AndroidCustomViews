@@ -58,12 +58,10 @@ class FloatBall(context: Context,
         }
     }
 
-    init {
-        init(context)
-    }
+    public var imageView: AppCompatImageView
 
-    private fun init(context: Context) {
-        val imageView = AppCompatImageView(context)
+    init {
+        imageView = AppCompatImageView(context)
         imageView.setBackgroundResource(mConfig.icon)
 
         addView(imageView, ViewGroup.LayoutParams(size, size))
@@ -73,6 +71,7 @@ class FloatBall(context: Context,
         mRunner = ScrollRunner(this, context)
         mVelocity = MotionVelocityUtil(context)
     }
+
 
     private fun initLayoutParams(context: Context) {
         mLayoutParams = FloatBallUtil.getLayoutParams(context)
@@ -166,7 +165,7 @@ class FloatBall(context: Context,
 
     private fun location(width: Int, height: Int) {
         val cfgGravity = mConfig.gravity
-        mHideHalfLater = mConfig.mHideHalfLater
+        mHideHalfLater = mConfig.hideHalfLater
         val gravity = cfgGravity.gravity
         val x: Int
         var y: Int

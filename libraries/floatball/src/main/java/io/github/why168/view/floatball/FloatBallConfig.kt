@@ -19,12 +19,10 @@ data class FloatBallConfig(var size: Int = 0,
                            var icon: Int,
                            var gravity: Gravity = Gravity.LEFT_TOP,
                            var offsetY: Int = 0,
-                           var mHideHalfLater: Boolean = true) {
-
+                           var hideHalfLater: Boolean = true) {
 
     //第一次显示的y坐标偏移量，左上角是原点。
     var mOffsetY = 0
-
 
     enum class Gravity(gravity: Int) {
         LEFT_TOP(android.view.Gravity.LEFT or android.view.Gravity.TOP),

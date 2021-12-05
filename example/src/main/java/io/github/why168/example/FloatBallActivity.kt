@@ -3,7 +3,6 @@ package io.github.why168.example
 import android.animation.ValueAnimator
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
@@ -12,7 +11,8 @@ import io.github.why168.R
 import io.github.why168.common.dp2px
 import io.github.why168.view.floatball.FloatBallConfig
 import io.github.why168.view.floatball.FloatBallManager
-import io.github.why168.view.floatball.FloatMenuCfg
+import io.github.why168.view.floatball.FloatMenuConfig
+import io.github.why168.view.floatball.menu.MenuItem
 import kotlinx.android.synthetic.main.activity_float_ball.*
 
 /**
@@ -29,11 +29,10 @@ class FloatBallActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_float_ball)
 
-        initSinglePageFloatBall(true)
+        initSinglePageFloatBall()
 
         clickFloatBall.setOnClickListener {
-            mFloatBallManager?.showTipView(" 震惊！恋养猫还能这样搜索... ")
-
+//            mFloatBallManager?.showTipView(" 震惊！恋养猫还能这样搜索... ")
 
             val valueAnimator = ValueAnimator.ofInt(0, mFrameLayout.width)
             valueAnimator.duration = 1000
@@ -49,8 +48,6 @@ class FloatBallActivity : AppCompatActivity() {
             }
 
             valueAnimator.start()
-
-
         }
     }
 
@@ -95,66 +92,73 @@ class FloatBallActivity : AppCompatActivity() {
      *
      * @param showMenu 显示菜单
      */
-    private fun initSinglePageFloatBall(showMenu: Boolean) {
+    private fun initSinglePageFloatBall() {
         val floatBallConfig = FloatBallConfig(
                 size = dp2px(45F).toInt(),
                 icon = R.drawable.dappp_menu_logo,
                 gravity = FloatBallConfig.Gravity.RIGHT_CENTER)
 
         // 设置悬浮球不半隐藏
-        floatBallConfig.mHideHalfLater = false
+        floatBallConfig.hideHalfLater = false
 
-        if (showMenu) {
-            //2 需要显示悬浮菜单
-            //2.1 初始化悬浮菜单配置，有菜单item的大小和菜单item的个数
-            val menuSize = dp2px(180F).toInt()
-            val menuItemSize = dp2px(40F).toInt()
-            val menuCfg = FloatMenuCfg(menuSize, menuItemSize)
-            //3 生成floatballManager
-            //必须传入Activity
-            mFloatBallManager = FloatBallManager(this, floatBallConfig, menuCfg) {
-                Toast.makeText(this, "标签", Toast.LENGTH_SHORT).show()
-                true
-            }
-            addFloatMenuItem()
-        } else {
-            //必须传入Activity
-            mFloatBallManager = FloatBallManager(this, floatBallConfig)
+        //2 需要显示悬浮菜单
+        //2.1 初始化悬浮菜单配置，有菜单item的大小和菜单item的个数
+        val floatMenuConfig = FloatMenuConfig(dp2px(180F).toInt(), dp2px(40F).toInt())
+
+        //3 生成FloatBallManager
+        //必须传入Activity
+        mFloatBallManager = FloatBallManager(this, floatBallConfig, floatMenuConfig) {
+            Toast.makeText(this, "标签", Toast.LENGTH_SHORT).show()
+            true
         }
+        addFloatMenuItem()
     }
 
     private fun toast(msg: String) {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
+    private var isTranslation: Boolean = false
+
+    private var items: MutableList<MenuItem> = arrayListOf(
+            object : MenuItem(R.drawable.dappp_menu_strategy) {
+                override fun setDrawable(): Pair<Boolean, Int> = Pair<Boolean, Int>(false, R.drawable.dappp_menu_strategy)
+
+                override fun action() {
+                    toast("攻略")
+                    mFloatBallManager?.closeMenu()
+                }
+            },
+            object : MenuItem(R.drawable.dappp_menu_translation) {
+                override fun setDrawable(): Pair<Boolean, Int> {
+
+                    return if (isTranslation) {
+                        isTranslation = false
+                        Pair<Boolean, Int>(true, R.drawable.dappp_menu_translation)
+                    } else {
+                        isTranslation = true
+                        Pair<Boolean, Int>(true, R.drawable.dappp_menu_translation_ok)
+                    }
+                }
+
+                override fun action() {
+                    toast("翻译")
+                    mFloatBallManager?.closeMenu()
+                    mFloatBallManager?.showTipView( "正在翻译，请稍等...")
+                }
+            },
+            object : MenuItem(R.drawable.dappp_menu_wallet) {
+                override fun setDrawable(): Pair<Boolean, Int> = Pair<Boolean, Int>(false, R.drawable.dappp_menu_wallet)
+                override fun action() {
+                    toast("钱包")
+                    mFloatBallManager?.closeMenu()
+                }
+            }
+    )
+
+
     private fun addFloatMenuItem() {
-        val personItem = object : io.github.why168.view.floatball.MenuItem(ContextCompat.getDrawable(this, R.drawable.dappp_menu_strategy)!!) {
-            override fun action() {
-                toast("攻略")
-                mFloatBallManager?.closeMenu()
-            }
-        }
-        val walletItem = object : io.github.why168.view.floatball.MenuItem(ContextCompat.getDrawable(this, R.drawable.dappp_menu_translation)!!) {
-            override fun action() {
-                toast("翻译")
-            }
-        }
-        val settingItem = object : io.github.why168.view.floatball.MenuItem(ContextCompat.getDrawable(this, R.drawable.dappp_menu_wallet)!!) {
-            override fun action() {
-                toast("钱包")
-                mFloatBallManager?.closeMenu()
-            }
-
-        }
-
-        mFloatBallManager
-                ?.addMenuItem(personItem)
-                ?.addMenuItem(walletItem)
-                ?.addMenuItem(settingItem)
-                ?.buildMenu()
+        mFloatBallManager?.setMenu(items)?.buildMenu()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

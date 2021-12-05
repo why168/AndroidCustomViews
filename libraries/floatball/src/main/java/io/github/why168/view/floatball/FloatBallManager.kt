@@ -1,16 +1,17 @@
 package io.github.why168.view.floatball
 
-import android.animation.ValueAnimator
 import android.app.Activity
 import android.graphics.Paint
 import android.graphics.Point
 import android.support.v4.view.ViewCompat
 import android.support.v7.widget.AppCompatTextView
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
+import io.github.why168.view.floatball.menu.MenuItem
 
 import java.util.ArrayList
+import android.widget.Toast
+
 
 /**
  *
@@ -20,7 +21,7 @@ import java.util.ArrayList
  */
 class FloatBallManager(activity: Activity,
                        ballCfg: FloatBallConfig,
-                       menuCfg: FloatMenuCfg? = null,
+                       menuCfg: FloatMenuConfig,
                        tipCallListener: (() -> Boolean)? = null) {
 
     private var mWindowManager: WindowManager
@@ -30,6 +31,8 @@ class FloatBallManager(activity: Activity,
     private var menuItems: MutableList<MenuItem> = ArrayList()
     private var mActivity: Activity = activity
     private var floatBall: FloatBall
+    private var viewTipLayout: FrameLayout // 标签布局
+    private var tipTextView: AppCompatTextView // 标签提示
 
     var floatBallX: Int = 0
     var floatBallY: Int = 0
@@ -41,11 +44,6 @@ class FloatBallManager(activity: Activity,
 
     var statusBarHeight: Int = 0
         get() = statusBarView.statusBarHeight
-
-
-    private var viewTipLayout: FrameLayout // 标签布局
-    var tipTextView: AppCompatTextView // 标签提示
-
 
     init {
         mWindowManager = mActivity.windowManager
@@ -60,38 +58,92 @@ class FloatBallManager(activity: Activity,
         viewTipLayout.measure(makeMeasureSpec, makeMeasureSpec)
 
         tipTextView = viewTipLayout.findViewById(R.id.tipTextView)
-        tipTextView.paint.apply {
-            flags = Paint.UNDERLINE_TEXT_FLAG //下划线
-            isAntiAlias = true//抗锯齿
-        }
+
 
         tipTextView.setOnClickListener { it ->
             tipCallListener?.invoke()?.let {
-                mWindowManager.removeView(viewTipLayout)
+                mWindowManager.removeViewImmediate(viewTipLayout)
             }
         }
     }
 
-    fun showTipView(tip: String) {
+    fun showTipView(tip: String, underline: Boolean = true) {
         // 判断是否在Window上先移除View
         if (ViewCompat.isAttachedToWindow(viewTipLayout)) {
-            mWindowManager.removeView(viewTipLayout)
+            mWindowManager.removeViewImmediate(viewTipLayout)
         }
 
+        if (underline)
+            tipTextView.paint.apply {
+                flags = Paint.UNDERLINE_TEXT_FLAG //下划线
+                isAntiAlias = true//抗锯齿
+            }
 
         tipTextView.text = tip
 
         val measuredHeight = viewTipLayout.measuredHeight
 
-        val floatBallX = floatBall.mLayoutParams.x
-        val floatBallY = floatBall.mLayoutParams.y
+        /*
+        val rect1 = Rect()
+        floatBall.imageView.getWindowVisibleDisplayFrame(rect1)
+        println("rect1 ${rect1.toString()}")
 
+        val rect2 = intArrayOf(0, 0)
+        floatBall.imageView.getLocationInWindow(rect2)
+        println("rect2 x = ${rect2[0]} y = ${rect2[1]}")
+
+        val rect3 = Rect()
+        floatBall.imageView.getLocalVisibleRect(rect3)
+        println("rect3 $rect3")
+        */
+
+        val rect4 = intArrayOf(0, 0)
+        floatBall.imageView.getLocationOnScreen(rect4)
+//        println("rect4 x = ${rect4[0]} y = ${rect4[1]}")
+
+        /*
+         val floatBallX = floatBall.mLayoutParams.x
+         val floatBallY = floatBall.mLayoutParams.y
+         */
+
+        val floatBallX = rect4[0]
+        val floatBallY = rect4[1]
+
+        // 获取屏幕的宽度
+        /*
+        val point = Point()
+        mWindowManager.defaultDisplay.getSize(point)
+        Log.i("TAG", point.toString())
+        */
         val statusBarLayoutParams = FloatBallUtil.getLayoutParams(mActivity, false)
-        statusBarLayoutParams.x = floatBallX / 2 - floatBall.size / 2
-        statusBarLayoutParams.y = (floatBallY -  floatBall.size  / 2 + measuredHeight * 1.5).toInt()
 
-        Log.i("TAG", "measuredHeight = $measuredHeight , floatBallX = $floatBallX，floatBallY = $floatBallY")
 
+
+
+        if ((mScreenWidth / 2) < floatBallX) {
+            // 右边的显示状态
+            tipTextView.setBackgroundResource(R.drawable.icon_right_tip)
+
+
+            val makeMeasureSpec = View.MeasureSpec.makeMeasureSpec((1 shl 30) - 1, View.MeasureSpec.AT_MOST)
+            viewTipLayout.measure(makeMeasureSpec, makeMeasureSpec)
+
+            statusBarLayoutParams.x = floatBallX - viewTipLayout.measuredWidth - 10
+            statusBarLayoutParams.y = floatBallY - measuredHeight / 2
+            Toast.makeText(mActivity, "右边的显示状态", Toast.LENGTH_SHORT).show()
+        } else {
+            // 左边的显示状态
+            tipTextView.setBackgroundResource(R.drawable.icon_left_tip)
+            statusBarLayoutParams.x = floatBallX + floatBall.width + 10
+            statusBarLayoutParams.y = floatBallY - measuredHeight / 2
+            Toast.makeText(mActivity, "左边的显示状态", Toast.LENGTH_SHORT).show()
+        }
+
+//        Log.i("TAG", "measuredHeight = $measuredHeight , floatBallX = $floatBallX，floatBallY = $floatBallY")
+
+
+        //TODO bug 执行动画卡顿
+/*
         val valueAnimator = ValueAnimator.ofInt(0, viewTipLayout.measuredWidth)
         valueAnimator.duration = 1000
 //        valueAnimator.interpolator = TimeInterpolator(0)
@@ -101,20 +153,39 @@ class FloatBallManager(activity: Activity,
 //            println(currentValue)
             // 输出每次变化后的属性值进行查看
 
-            val layoutParams = viewTipLayout.layoutParams as WindowManager.LayoutParams
+            */
+/*
+            val layoutParams = viewTipLayout.layoutParams
             layoutParams.width = currentValue
             layoutParams.height = measuredHeight
+            *//*
 
 
-            viewTipLayout.layoutParams = layoutParams
+            statusBarLayoutParams.width = currentValue
+            statusBarLayoutParams.height = measuredHeight
+
+//            viewTipLayout.layoutParams = statusBarLayoutParams
 //            viewTipLayout.postInvalidate()
-            mWindowManager.updateViewLayout(viewTipLayout, layoutParams)
 
-            println("height = ${layoutParams.height}  width = ${layoutParams.width}  x = ${layoutParams.x}  y = ${layoutParams.y}")
+            mWindowManager.updateViewLayout(viewTipLayout, statusBarLayoutParams)
+
+//            println("height = ${layoutParams.height}  width = ${layoutParams.width}  x = ${layoutParams.x}  y = ${layoutParams.y}")
         }
+*/
 
         mWindowManager.addView(viewTipLayout, statusBarLayoutParams)
-        valueAnimator.start()
+
+
+//        valueAnimator.start()
+    }
+
+    fun closeTipView(delayMillis: Long = 0) {
+        viewTipLayout.postDelayed({
+            if (ViewCompat.isAttachedToWindow(viewTipLayout)) {
+                mWindowManager.removeViewImmediate(viewTipLayout)
+            }
+        }, delayMillis)
+
     }
 
 

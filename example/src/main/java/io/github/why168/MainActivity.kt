@@ -1,19 +1,10 @@
 package io.github.why168
 
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.SpannableString
-import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
-import android.text.Spannable
-import android.text.style.BackgroundColorSpan
-import android.text.style.ForegroundColorSpan
-import io.github.why168.R
 import io.github.why168.example.*
 import io.github.why168.extension.startActivity
-import kotlinx.android.synthetic.main.activity_print.*
-import kotlin.reflect.KClass
 
 /**
  * Main界面

@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.support.v7.widget.AppCompatImageView
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.MotionEvent
@@ -29,6 +30,7 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ImageView
+import io.github.why168.view.floatball.menu.MenuItem
 
 /**
  *
@@ -41,16 +43,16 @@ import android.widget.ImageView
 @SuppressLint("ViewConstructor")
 class FloatMenu(context: Context,
                 private val floatBallManager: FloatBallManager,
-                private val mConfig: FloatMenuCfg?) : FrameLayout(context) {
+                floatMenuConfig: FloatMenuConfig) : FrameLayout(context) {
 
     private var mMenuLayout: MenuLayout? = null
 
-    private var mIconView: ImageView? = null
+    private var mIconView: AppCompatImageView
     private var mPosition: Int = 0
     private var mItemSize: Int = 0
     private var size: Int = 0
     private val mDuration = 250
-    private var mLayoutParams: WindowManager.LayoutParams? = null
+    private var mLayoutParams: WindowManager.LayoutParams
     private var isAdded = false
     private var mBallSize: Int = 0
     private val mListenBackEvent = true
@@ -74,50 +76,50 @@ class FloatMenu(context: Context,
 
 
     init {
-        if (mConfig != null) {
-            mItemSize = mConfig.mItemSize
-            size = mConfig.mSize
-            init(context)
-            mMenuLayout!!.childSize = mItemSize
-        }
-    }
+        mItemSize = floatMenuConfig.itemSize
+        size = floatMenuConfig.size
 
-
-    private fun initLayoutParams(context: Context) {
         mLayoutParams = FloatBallUtil.getLayoutParams(context, mListenBackEvent)
+
+        mLayoutParams.height = size
+        mLayoutParams.width = size
+
+        // addMenuLayout
+        mMenuLayout = MenuLayout(context)
+        val layoutParams = ViewGroup.LayoutParams(size, size)
+        addView(mMenuLayout, layoutParams)
+        mMenuLayout!!.visibility = View.INVISIBLE
+
+        // addControlLayout
+        mIconView = AppCompatImageView(context)
+        val iconViewParams = FrameLayout.LayoutParams(mBallSize, mBallSize)
+        addView(mIconView, iconViewParams)
+        mIconView.setOnClickListener {
+            closeMenu()
+        }
+
+        setOnKeyListener(OnKeyListener { v, keyCode, event ->
+            val action = event.action
+            if (action == KeyEvent.ACTION_DOWN) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    this@FloatMenu.floatBallManager.closeMenu()
+                    return@OnKeyListener true
+                }
+            }
+            false
+        })
+        isFocusableInTouchMode = true
+
+        mMenuLayout!!.childSize = mItemSize
     }
 
-    fun removeViewTreeObserver(listener: ViewTreeObserver.OnGlobalLayoutListener) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            viewTreeObserver.removeGlobalOnLayoutListener(listener)
-        } else {
-            viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val action = event.action
-        val x = event.rawX.toInt()
-        val y = event.rawY.toInt()
-        when (action) {
-            MotionEvent.ACTION_DOWN -> {
-            }
-            MotionEvent.ACTION_MOVE -> {
-            }
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_OUTSIDE -> if (mMenuLayout!!.isExpanded) {
-                toggle(mDuration)
-            }
-        }
-        return super.onTouchEvent(event)
-    }
 
     fun attachToWindow(windowManager: WindowManager) {
         if (!isAdded) {
             mBallSize = floatBallManager.ballSize
-            mLayoutParams!!.x = floatBallManager.floatBallX
-            mLayoutParams!!.y = floatBallManager.floatBallY - size / 2
-            mPosition = computeMenuLayout(mLayoutParams!!)
+            mLayoutParams.x = floatBallManager.floatBallX
+            mLayoutParams.y = floatBallManager.floatBallY - size / 2
+            mPosition = computeMenuLayout(mLayoutParams)
             refreshPathMenu(mPosition)
             toggle(mDuration)
             windowManager.addView(this, mLayoutParams)
@@ -138,42 +140,6 @@ class FloatMenu(context: Context,
         }
     }
 
-    private fun addMenuLayout(context: Context) {
-        mMenuLayout = MenuLayout(context)
-        val layoutParams = ViewGroup.LayoutParams(size, size)
-        addView(mMenuLayout, layoutParams)
-        mMenuLayout!!.visibility = View.INVISIBLE
-    }
-
-    private fun addControllLayout(context: Context) {
-        mIconView = ImageView(context)
-        val sublayoutParams = FrameLayout.LayoutParams(mBallSize, mBallSize)
-        addView(mIconView, sublayoutParams)
-    }
-
-    private fun init(context: Context) {
-        initLayoutParams(context)
-        mLayoutParams!!.height = size
-        mLayoutParams!!.width = size
-        addMenuLayout(context)
-        addControllLayout(context)
-
-        mIconView!!.setOnClickListener { closeMenu() }
-
-        if (mListenBackEvent) {
-            setOnKeyListener(OnKeyListener { v, keyCode, event ->
-                val action = event.action
-                if (action == KeyEvent.ACTION_DOWN) {
-                    if (keyCode == KeyEvent.KEYCODE_BACK) {
-                        this@FloatMenu.floatBallManager.closeMenu()
-                        return@OnKeyListener true
-                    }
-                }
-                false
-            })
-            isFocusableInTouchMode = true
-        }
-    }
 
     fun closeMenu() {
         if (mMenuLayout!!.isExpanded) {
@@ -205,14 +171,48 @@ class FloatMenu(context: Context,
         }
     }
 
+
+    fun removeViewTreeObserver(listener: ViewTreeObserver.OnGlobalLayoutListener) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            viewTreeObserver.removeGlobalOnLayoutListener(listener)
+        } else {
+            viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val action = event.action
+        val x = event.rawX.toInt()
+        val y = event.rawY.toInt()
+        when (action) {
+            MotionEvent.ACTION_DOWN -> {
+            }
+            MotionEvent.ACTION_MOVE -> {
+            }
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_OUTSIDE -> if (mMenuLayout!!.isExpanded) {
+                toggle(mDuration)
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+
     fun addItem(menuItem: MenuItem) {
-        if (mConfig == null) return
-        val imageView = ImageView(context)
-        imageView.setBackgroundDrawable(menuItem.mDrawable)
+        val imageView = AppCompatImageView(context)
+        imageView.setImageResource(menuItem.mDrawable)
         mMenuLayout!!.addView(imageView)
+
         imageView.setOnClickListener {
-            if (!mMenuLayout!!.isMoving)
+            if (!mMenuLayout!!.isMoving) {
+                // 判断是否切换图标
+                val (isSet, image) = menuItem.setDrawable()
+                if (isSet) {
+                    imageView.setImageResource(image)
+                }
+
                 menuItem.action()
+            }
         }
     }
 
@@ -223,9 +223,9 @@ class FloatMenu(context: Context,
     /**
      * 根据按钮位置改变子菜单方向
      */
-    fun refreshPathMenu(position: Int) {
+    private fun refreshPathMenu(position: Int) {
         val menuLp = mMenuLayout!!.layoutParams as FrameLayout.LayoutParams
-        val iconLp = mIconView!!.layoutParams as FrameLayout.LayoutParams
+        val iconLp = mIconView.layoutParams as FrameLayout.LayoutParams
 
         when (position) {
             LEFT_TOP//左上
@@ -283,7 +283,7 @@ class FloatMenu(context: Context,
                 mMenuLayout?.setArc(0f, 360f, position)
             }
         }
-        mIconView!!.layoutParams = iconLp
+        mIconView.layoutParams = iconLp
         mMenuLayout?.layoutParams = menuLp
     }
 
@@ -292,7 +292,7 @@ class FloatMenu(context: Context,
      *
      * @return
      */
-    fun computeMenuLayout(layoutParams: WindowManager.LayoutParams): Int {
+    private fun computeMenuLayout(layoutParams: WindowManager.LayoutParams): Int {
         var position = FloatMenu.RIGHT_CENTER
         val halfBallSize = mBallSize / 2
         val screenWidth = floatBallManager.mScreenWidth
